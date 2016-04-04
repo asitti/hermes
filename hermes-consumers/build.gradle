@@ -10,7 +10,7 @@ dependencies {
     compile group: 'org.eclipse.jetty', name: 'jetty-client', version: '9.3.6.v20151106'
 
     compile group: 'javax.jms', name: 'javax.jms-api', version: '2.0'
-    compile group: 'com.jayway.jsonpath', name: 'json-path', version: '0.9.1'
+    compile group: 'com.jayway.jsonpath', name: 'json-path', version: '2.2.0'
     compile group: 'joda-time', name: 'joda-time', version: '2.5'
 
     compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.1'
@@ -37,6 +37,8 @@ dependencies {
     testCompile(group: 'com.jayway.awaitility', name: 'awaitility', version: '1.6.1') {
         exclude group: 'com.jayway.jsonpath', module: 'json-path'
     }
+
+    testCompile group: 'tech.allegro.schema.json2avro', name: 'converter', version: '0.2.2'
 
     testCompile group: 'org.spockframework', name: 'spock-core', version: versions.spock
 }
