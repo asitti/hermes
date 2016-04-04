@@ -2,9 +2,9 @@ package pl.allegro.tech.hermes.consumers.consumer.receiver.kafka;
 
 import pl.allegro.tech.hermes.api.Subscription;
 import pl.allegro.tech.hermes.consumers.consumer.Message;
-import pl.allegro.tech.hermes.consumers.consumer.filtering.FilterChain;
-import pl.allegro.tech.hermes.consumers.consumer.filtering.FilterChainFactory;
-import pl.allegro.tech.hermes.consumers.consumer.filtering.FilterResult;
+import pl.allegro.tech.hermes.consumers.consumer.filtering.chain.FilterChain;
+import pl.allegro.tech.hermes.consumers.consumer.filtering.chain.FilterChainFactory;
+import pl.allegro.tech.hermes.consumers.consumer.filtering.chain.FilterResult;
 import pl.allegro.tech.hermes.consumers.consumer.filtering.FilteredMessageHandler;
 import pl.allegro.tech.hermes.consumers.consumer.receiver.MessageReceiver;
 
@@ -20,7 +20,8 @@ public class FilteringMessageReceiver implements MessageReceiver {
 
     public FilteringMessageReceiver(MessageReceiver receiver,
                                     FilteredMessageHandler filteredMessageHandler,
-                                    FilterChainFactory filterChainFactory, final Subscription subscription) {
+                                    FilterChainFactory filterChainFactory,
+                                    Subscription subscription) {
         this.receiver = receiver;
         this.filteredMessageHandler = filteredMessageHandler;
         this.filterChainFactory = filterChainFactory;
@@ -29,7 +30,7 @@ public class FilteringMessageReceiver implements MessageReceiver {
 
     private boolean filter(final Message message) {
         FilterResult result = filterChain.apply(message);
-        filteredMessageHandler.handle(result, message);
+        filteredMessageHandler.handle(result, message, subscription);
         return result.filtered;
     }
 
@@ -39,7 +40,7 @@ public class FilteringMessageReceiver implements MessageReceiver {
         do {
             updateFilter();
             message = receiver.next();
-        } while (consuming && !filter(message));
+        } while (consuming && filter(message));
         return message;
     }
 

@@ -18,6 +18,8 @@ dependencies {
         exclude group: 'net.sf.jopt-simple'
     }
 
+    compile group: 'com.jayway.jsonpath', name: 'json-path', version: '2.2.0'
+
     compile group: 'org.glassfish.hk2', name: 'hk2-locator', version: '2.3.0-b01'
     compile group: 'org.glassfish.jersey.core', name: 'jersey-client', version: versions.jersey
     compile group: 'org.glassfish.jersey.media', name: 'jersey-media-json-jackson', version: versions.jersey

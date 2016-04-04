@@ -14,6 +14,8 @@ import pl.allegro.tech.hermes.consumers.consumer.batch.MessageBatchFactory;
 import pl.allegro.tech.hermes.consumers.consumer.converter.AvroToJsonMessageConverter;
 import pl.allegro.tech.hermes.consumers.consumer.converter.MessageConverterResolver;
 import pl.allegro.tech.hermes.consumers.consumer.converter.NoOperationMessageConverter;
+import pl.allegro.tech.hermes.consumers.consumer.filtering.chain.FilterChainFactory;
+import pl.allegro.tech.hermes.consumers.consumer.filtering.FilteredMessageHandler;
 import pl.allegro.tech.hermes.consumers.consumer.interpolation.MessageBodyInterpolator;
 import pl.allegro.tech.hermes.consumers.consumer.interpolation.UriInterpolator;
 import pl.allegro.tech.hermes.consumers.consumer.offset.OffsetsStorage;
@@ -110,6 +112,8 @@ public class ConsumersBinder extends AbstractBinder {
         bindSingleton(UndeliveredMessageLogPersister.class);
         bindFactory(ByteBufferMessageBatchFactoryProvider.class).in(Singleton.class).to(MessageBatchFactory.class);
         bind(HttpMessageBatchSenderFactory.class).to(MessageBatchSenderFactory.class).in(Singleton.class);
+        bindSingleton(FilterChainFactory.class);
+        bindSingleton(FilteredMessageHandler.class);
     }
 
     private <T> void bindSingleton(Class<T> clazz) {
