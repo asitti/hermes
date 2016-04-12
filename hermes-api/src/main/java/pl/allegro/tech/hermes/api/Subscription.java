@@ -85,7 +85,7 @@ public class Subscription {
         this.topicName = topicName;
         this.name = name;
         this.endpoint = endpoint;
-        this.filters = filters == null? new ArrayList<>() : filters;
+        this.filters = filters;
         this.state = state != null ? state : State.PENDING;
         this.description = description;
         this.trackingEnabled = trackingEnabled;
@@ -161,7 +161,7 @@ public class Subscription {
                 monitoringDetails,
                 contentType,
                 validDeliveryType,
-                filters
+                filters == null? new ArrayList<>() : filters
         );
     }
 
