@@ -85,7 +85,7 @@ public class Subscription {
         this.topicName = topicName;
         this.name = name;
         this.endpoint = endpoint;
-        this.filters = filters;
+        this.filters.addAll(filters);
         this.state = state != null ? state : State.PENDING;
         this.description = description;
         this.trackingEnabled = trackingEnabled;
