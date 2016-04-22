@@ -23,7 +23,7 @@ public class MessageSenderFactory {
         if (provider == null) {
             throw new EndpointProtocolNotSupportedException(endpoint);
         }
-        return provider.create(endpoint);
+        return provider.create(subscription);
     }
 
     public void addSupportedProtocol(String protocol, ProtocolMessageSenderProvider provider) {

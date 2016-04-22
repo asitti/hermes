@@ -14,6 +14,7 @@ import pl.allegro.tech.hermes.consumers.consumer.sender.MessageSendingResult;
 import pl.allegro.tech.hermes.consumers.consumer.sender.timeout.FutureAsyncTimeout;
 
 import java.time.Duration;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -85,8 +86,9 @@ public class ConsumerMessageSender {
 
     public synchronized void updateSubscription(Subscription newSubscription) {
         boolean endpointUpdated = !this.subscription.getEndpoint().equals(newSubscription.getEndpoint());
+        boolean subscriptionPolicyUpdated = !Objects.equals(this.subscription.getSerialSubscriptionPolicy(), newSubscription.getSerialSubscriptionPolicy());
         this.subscription = newSubscription;
-        if (endpointUpdated) {
+        if (endpointUpdated || subscriptionPolicyUpdated) {
             this.messageSender = messageSenderFactory.create(newSubscription);
         }
     }

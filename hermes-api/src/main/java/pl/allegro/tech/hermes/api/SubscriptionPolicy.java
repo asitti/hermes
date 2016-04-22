@@ -13,27 +13,34 @@ public class SubscriptionPolicy {
     private static final int DEFAULT_RATE = 400;
     private static final int DEFAULT_MESSAGE_TTL = 3600;
     private static final int DEFAULT_MESSAGE_BACKOFF = 100;
+    private static final int DEFAULT_REQUEST_TIMEOUT = 1000;
 
     @Min(1)
-    private int rate;
+    private int rate = DEFAULT_RATE;
 
     @Min(0)
     @Max(7200)
-    private int messageTtl = 3600;
+    private int messageTtl = DEFAULT_MESSAGE_TTL;
 
     @Min(0)
-    private int messageBackoff = 100;
+    private int messageBackoff = DEFAULT_MESSAGE_BACKOFF;
+
+    @Min(0)
+    private int requestTimeout = DEFAULT_REQUEST_TIMEOUT;
 
     private boolean retryClientErrors = false;
 
-    private SubscriptionPolicy() { }
+    private SubscriptionPolicy() {
+    }
 
     public SubscriptionPolicy(int rate,
                               int messageTtl,
+                              int requestTimeout,
                               boolean retryClientErrors,
                               int messageBackoff) {
         this.rate = rate;
         this.messageTtl = messageTtl;
+        this.requestTimeout = requestTimeout;
         this.retryClientErrors = retryClientErrors;
         this.messageBackoff = messageBackoff;
     }
@@ -43,6 +50,7 @@ public class SubscriptionPolicy {
         return new SubscriptionPolicy(
                 (Integer) properties.getOrDefault("rate", DEFAULT_RATE),
                 (Integer) properties.getOrDefault("messageTtl", DEFAULT_MESSAGE_TTL),
+                (Integer) properties.getOrDefault("requestTimeout", DEFAULT_REQUEST_TIMEOUT),
                 (Boolean) properties.getOrDefault("retryClientErrors", false),
                 (Integer) properties.getOrDefault("messageBackoff", DEFAULT_MESSAGE_BACKOFF)
         );
@@ -65,7 +73,8 @@ public class SubscriptionPolicy {
         return Objects.equals(this.rate, other.rate)
                 && Objects.equals(this.messageTtl, other.messageTtl)
                 && Objects.equals(this.messageBackoff, other.messageBackoff)
-                && Objects.equals(this.retryClientErrors, other.retryClientErrors);
+                && Objects.equals(this.retryClientErrors, other.retryClientErrors)
+                && Objects.equals(this.requestTimeout, other.requestTimeout);
     }
 
     @Override
@@ -73,6 +82,7 @@ public class SubscriptionPolicy {
         return com.google.common.base.Objects.toStringHelper(this)
                 .add("rate", rate)
                 .add("messageTtl", messageTtl)
+                .add("requestTimeout", requestTimeout)
                 .add("messageBackoff", messageBackoff)
                 .add("retryClientErrors", retryClientErrors)
                 .toString();
@@ -98,6 +108,10 @@ public class SubscriptionPolicy {
         return messageBackoff;
     }
 
+    public int getRequestTimeout() {
+        return requestTimeout;
+    }
+
     public static class Builder {
 
         private SubscriptionPolicy subscriptionPolicy;
@@ -119,6 +133,11 @@ public class SubscriptionPolicy {
 
         public Builder withMessageTtl(int ttl) {
             subscriptionPolicy.messageTtl = ttl;
+            return this;
+        }
+
+        public Builder withRequestTimeout(int timeout) {
+            subscriptionPolicy.requestTimeout = timeout;
             return this;
         }
 

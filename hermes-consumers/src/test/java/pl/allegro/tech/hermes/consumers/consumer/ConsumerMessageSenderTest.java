@@ -330,6 +330,24 @@ public class ConsumerMessageSenderTest {
         verify(otherMessageSender).send(message);
     }
 
+    @Test
+    public void shouldDeliverToNewSenderAfterModifiedTimeout() {
+        // given
+        Message message = message();
+        Subscription subscriptionWithModfiedTimeout = subscriptionWithRequestTimeout(2000);
+        MessageSender otherMessageSender = mock(MessageSender.class);
+
+        when(messageSenderFactory.create(subscriptionWithModfiedTimeout)).thenReturn(otherMessageSender);
+        when(otherMessageSender.send(message)).thenReturn(success());
+
+        // when
+        sender.updateSubscription(subscriptionWithModfiedTimeout);
+        sender.sendMessage(message);
+
+        // then
+        verify(otherMessageSender).send(message);
+    }
+
     private ConsumerMessageSender consumerMessageSender(Subscription subscription) {
         when(messageSenderFactory.create(subscription)).thenReturn(messageSender);
         return new ConsumerMessageSender(subscription, messageSenderFactory, successHandler, errorHandler, rateLimiter,
@@ -390,6 +408,10 @@ public class ConsumerMessageSenderTest {
 
     private Subscription subscriptionWithEndpoint(String endpoint) {
         return subscriptionBuilderWithTestValues().withEndpoint(endpoint).build();
+    }
+
+    private Subscription subscriptionWithRequestTimeout(int timeout) {
+        return subscriptionBuilderWithTestValues().withRequestTimeout(timeout).build();
     }
 
     private SubscriptionBuilder subscriptionBuilderWithTestValues() {
