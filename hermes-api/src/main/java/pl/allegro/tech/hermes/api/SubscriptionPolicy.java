@@ -28,6 +28,8 @@ public class SubscriptionPolicy {
     @Min(0)
     private int requestTimeout = DEFAULT_REQUEST_TIMEOUT;
 
+    private Integer inflightSize = null;
+
     private boolean retryClientErrors = false;
 
     private SubscriptionPolicy() {
@@ -37,12 +39,22 @@ public class SubscriptionPolicy {
                               int messageTtl,
                               int requestTimeout,
                               boolean retryClientErrors,
-                              int messageBackoff) {
+                              int messageBackoff,
+                              Integer inflightSize) {
         this.rate = rate;
         this.messageTtl = messageTtl;
         this.requestTimeout = requestTimeout;
         this.retryClientErrors = retryClientErrors;
         this.messageBackoff = messageBackoff;
+        this.inflightSize = inflightSize;
+    }
+
+    public SubscriptionPolicy(int rate,
+                              int messageTtl,
+                              int requestTimeout,
+                              boolean retryClientErrors,
+                              int messageBackoff) {
+        this(rate, messageTtl, requestTimeout, retryClientErrors, messageBackoff, null);
     }
 
     @JsonCreator
@@ -52,13 +64,14 @@ public class SubscriptionPolicy {
                 (Integer) properties.getOrDefault("messageTtl", DEFAULT_MESSAGE_TTL),
                 (Integer) properties.getOrDefault("requestTimeout", DEFAULT_REQUEST_TIMEOUT),
                 (Boolean) properties.getOrDefault("retryClientErrors", false),
-                (Integer) properties.getOrDefault("messageBackoff", DEFAULT_MESSAGE_BACKOFF)
+                (Integer) properties.getOrDefault("messageBackoff", DEFAULT_MESSAGE_BACKOFF),
+                (Integer) properties.getOrDefault("inflightSize", null)
         );
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(rate, messageTtl);
+        return Objects.hash(rate, messageTtl, messageBackoff, retryClientErrors, requestTimeout, inflightSize);
     }
 
     @Override
@@ -74,7 +87,8 @@ public class SubscriptionPolicy {
                 && Objects.equals(this.messageTtl, other.messageTtl)
                 && Objects.equals(this.messageBackoff, other.messageBackoff)
                 && Objects.equals(this.retryClientErrors, other.retryClientErrors)
-                && Objects.equals(this.requestTimeout, other.requestTimeout);
+                && Objects.equals(this.requestTimeout, other.requestTimeout)
+                && Objects.equals(this.inflightSize, other.inflightSize);
     }
 
     @Override
@@ -85,6 +99,7 @@ public class SubscriptionPolicy {
                 .add("requestTimeout", requestTimeout)
                 .add("messageBackoff", messageBackoff)
                 .add("retryClientErrors", retryClientErrors)
+                .add("inflightSize", inflightSize)
                 .toString();
     }
 
@@ -110,6 +125,10 @@ public class SubscriptionPolicy {
 
     public int getRequestTimeout() {
         return requestTimeout;
+    }
+
+    public Integer getInflightSize() {
+        return inflightSize;
     }
 
     public static class Builder {
@@ -138,6 +157,11 @@ public class SubscriptionPolicy {
 
         public Builder withRequestTimeout(int timeout) {
             subscriptionPolicy.requestTimeout = timeout;
+            return this;
+        }
+
+        public Builder withInflightSize(Integer inflightSize) {
+            subscriptionPolicy.inflightSize = inflightSize;
             return this;
         }
 
