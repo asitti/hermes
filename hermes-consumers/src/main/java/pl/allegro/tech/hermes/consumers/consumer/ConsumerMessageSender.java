@@ -57,7 +57,7 @@ public class ConsumerMessageSender {
         this.inflightSemaphore = inflightSemaphore;
         this.retrySingleThreadExecutor = Executors.newScheduledThreadPool(1);
         this.async = futureAsyncTimeout;
-        this.asyncTimeoutMs = asyncTimeoutMs;
+        this.asyncTimeoutMs = asyncTimeoutMs + subscription.getSerialSubscriptionPolicy().getRequestTimeout();
         this.consumerLatencyTimer = hermesMetrics.latencyTimer(subscription);
     }
 
